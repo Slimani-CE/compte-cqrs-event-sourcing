@@ -170,3 +170,6 @@ public class AccountCommandController {
 
 6. Testing the debit of an account with insufficient balance
 ![Testing the debit of an account with insufficient balance](assets/screenshot6.png)
+
+7. Testing the querying service (Creating an account , crediting it and debiting it)
+![Testing the querying service](assets/screenshot7.png)

@@ -16,6 +16,8 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 
+import java.util.Date;
+
 @Aggregate
 public class AccountAggregate {
     @AggregateIdentifier
@@ -34,6 +36,7 @@ public class AccountAggregate {
         if(createAccountCommand.getInitialBalance() < 0) throw new RuntimeException("You can't create account with negative initial balance");
         AggregateLifecycle.apply(new AccountCreatedEvent(
             createAccountCommand.getId(),
+            new Date(),
             createAccountCommand.getInitialBalance(),
             createAccountCommand.getCurrency(),
             AccountStatus.CREATED
@@ -48,6 +51,7 @@ public class AccountAggregate {
         this.status = event.getStatus();
         AggregateLifecycle.apply(new AccountActivatedEvent(
             event.getId(),
+            new Date(),
             AccountStatus.ACTIVATED
         ));
     }
@@ -63,6 +67,7 @@ public class AccountAggregate {
 
         AggregateLifecycle.apply(new AccountCreditedEvent(
             command.getId(),
+            new Date(),
             command.getAmount(),
             command.getCurrency()
         ));
@@ -80,6 +85,7 @@ public class AccountAggregate {
 
         AggregateLifecycle.apply(new AccountDebitedEvent(
             command.getId(),
+            new Date(),
             command.getAmount(),
             command.getCurrency()
         ));

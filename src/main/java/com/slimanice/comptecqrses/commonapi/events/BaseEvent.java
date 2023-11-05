@@ -2,10 +2,15 @@ package com.slimanice.comptecqrses.commonapi.events;
 
 import lombok.Getter;
 
-public abstract class BaseEvent<T> {
-    @Getter private T id;
+import java.util.Date;
 
-    public BaseEvent(T id) {
+@Getter
+public abstract class BaseEvent<T> {
+    private T id;
+    private Date date;
+
+    public BaseEvent(T id, Date date) {
         this.id = id;
+        this.date = date;
     }
 }
