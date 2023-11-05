@@ -1,10 +1,13 @@
 package com.slimanice.comptecqrses.commands.controllers;
 
 import com.slimanice.comptecqrses.commonapi.commands.CreateAccountCommand;
+import com.slimanice.comptecqrses.commonapi.commands.CreditAccountCommand;
+import com.slimanice.comptecqrses.commonapi.commands.DebitAccountCommand;
 import com.slimanice.comptecqrses.commonapi.dtos.CreateAccountRequestDTO;
+import com.slimanice.comptecqrses.commonapi.dtos.CreditAccountRequestDTO;
+import com.slimanice.comptecqrses.commonapi.dtos.DebitAccountRequestDTO;
 import lombok.AllArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.eventhandling.DomainEventMessage;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +27,31 @@ public class AccountCommandController {
     @PostMapping(path = "/create")
     public CompletableFuture<String> createAccount(@RequestBody CreateAccountRequestDTO request) {
         CompletableFuture<String> commandResponse = commandGateway.send(new CreateAccountCommand(
-            UUID.randomUUID().toString(),
-            request.getInitialBalance(),
-            request.getCurrency()
+                UUID.randomUUID().toString(),
+                request.getInitialBalance(),
+                request.getCurrency()
+        ));
+
+        return commandResponse;
+    }
+
+    @PutMapping(path = "/credit")
+    public CompletableFuture<String> creditAccount(@RequestBody CreditAccountRequestDTO request) {
+        CompletableFuture<String> commandResponse = commandGateway.send(new CreditAccountCommand(
+                request.getAccountId(),
+                request.getAmount(),
+                request.getCurrency()
+        ));
+
+        return commandResponse;
+    }
+
+    @PutMapping(path = "/debit")
+    public CompletableFuture<String> debitAccount(@RequestBody DebitAccountRequestDTO request) {
+        CompletableFuture<String> commandResponse = commandGateway.send(new DebitAccountCommand(
+                request.getAccountId(),
+                request.getAmount(),
+                request.getCurrency()
         ));
 
         return commandResponse;

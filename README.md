@@ -148,14 +148,25 @@ public class AccountCommandController {
 ```
 
 ## ✅ Screenshots
-- Testing the creation of an account
+1. Testing the creation of an account
 ![Testing the creation of an account](assets/screenshot1.png)
 
-- Testing the creation of an account with negative initial balance
+
+2. Testing the creation of an account with negative initial balance
 ![Testing the creation of an account with negative initial balance](assets/screenshot2.png)
 
-- Created events in MySQL database
+
+3. Created events in MySQL database
 ![Created events in MySQL database](assets/screenshot3.png)
 
-- Fetching event by from event store
+
+4. Fetching event from event store
 ![Fetching event by account id from event store](assets/screenshot4.png)
+
+
+5. Testing the credit of an account
+![Testing the credit of an account](assets/screenshot5.png)
+
+
+6. Testing the debit of an account with insufficient balance
+![Testing the debit of an account with insufficient balance](assets/screenshot6.png)
