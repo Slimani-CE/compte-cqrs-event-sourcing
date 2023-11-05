@@ -2,6 +2,7 @@ package com.slimanice.comptecqrses.commands.aggregates;
 
 import com.slimanice.comptecqrses.commonapi.commands.CreateAccountCommand;
 import com.slimanice.comptecqrses.commonapi.enums.AccountStatus;
+import com.slimanice.comptecqrses.commonapi.events.AccountActivatedEvent;
 import com.slimanice.comptecqrses.commonapi.events.AccountCreatedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -38,5 +39,14 @@ public class AccountAggregate {
         this.balance = event.getInitialBalance();
         this.currency = event.getCurrency();
         this.status = AccountStatus.CREATED;
+        AggregateLifecycle.apply(new AccountActivatedEvent(
+            event.getId(),
+            AccountStatus.ACTIVATED
+        ));
+    }
+
+    @EventSourcingHandler
+    public void on(AccountActivatedEvent event) {
+        this.status = event.getStatus();
     }
 }

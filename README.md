@@ -50,6 +50,7 @@ C:.
 │   │               │   │       AccountStatus.java
 │   │               │   │
 │   │               │   └───events
+│   │               │           AccountActivatedEvent
 │   │               │           AccountCreatedEvent.java
 │   │               │           AccountCreditedEvent.java
 │   │               │           AccountDebitedEvent.java
@@ -65,34 +66,43 @@ C:.
 ```java
 @Aggregate
 public class AccountAggregate {
-    @AggregateIdentifier
-    private String accountId;
-    private double balance;
-    private String currency;
-    private AccountStatus status;
+  @AggregateIdentifier
+  private String accountId;
+  private double balance;
+  private String currency;
+  private AccountStatus status;
 
-    public AccountAggregate() {
-        // Required by AXON
-    }
+  public AccountAggregate() {
+    // Required by AXON
+  }
 
-    @CommandHandler
-    public AccountAggregate(CreateAccountCommand createAccountCommand) {
-        // Required by AXON
-        if(createAccountCommand.getInitialBalance() < 0) throw new RuntimeException("You can't create account with negative initial balance");
-        AggregateLifecycle.apply(new AccountCreatedEvent(
+  @CommandHandler
+  public AccountAggregate(CreateAccountCommand createAccountCommand) {
+    // Required by AXON
+    if(createAccountCommand.getInitialBalance() < 0) throw new RuntimeException("You can't create account with negative initial balance");
+    AggregateLifecycle.apply(new AccountCreatedEvent(
             createAccountCommand.getId(),
             createAccountCommand.getInitialBalance(),
             createAccountCommand.getCurrency()
-        ));
-    }
+    ));
+  }
 
-    @EventSourcingHandler
-    public void on(AccountCreatedEvent event) {
-        this.accountId = event.getId();
-        this.balance = event.getInitialBalance();
-        this.currency = event.getCurrency();
-        this.status = AccountStatus.CREATED;
-    }
+  @EventSourcingHandler
+  public void on(AccountCreatedEvent event) {
+    this.accountId = event.getId();
+    this.balance = event.getInitialBalance();
+    this.currency = event.getCurrency();
+    this.status = AccountStatus.CREATED;
+    AggregateLifecycle.apply(new AccountActivatedEvent(
+            event.getId(),
+            AccountStatus.ACTIVATED
+    ));
+  }
+
+  @EventSourcingHandler
+  public void on(AccountActivatedEvent event) {
+    this.status = event.getStatus();
+  }
 }
 ```
 
@@ -127,6 +137,12 @@ public class AccountCommandController {
         );
         return entity;
     }
+    
+    // Fetching event from event store by account id
+    @GetMapping(path = "/eventStore/{accountId}")
+    public Stream eventStore(@PathVariable String accountId) {
+      return eventStore.readEvents(accountId).asStream();
+    }
 }
 
 ```
@@ -140,3 +156,6 @@ public class AccountCommandController {
 
 - Created events in MySQL database
 ![Created events in MySQL database](assets/screenshot3.png)
+
+- Fetching event by from event store
+![Fetching event by account id from event store](assets/screenshot4.png)
