@@ -1,5 +1,6 @@
 package com.slimanice.comptecqrses.query.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.slimanice.comptecqrses.commonapi.enums.OperationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,5 +19,6 @@ public class Operation {
     @Enumerated(EnumType.STRING)
     private OperationType type;
     @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Account account;
 }

@@ -5,6 +5,8 @@ import com.slimanice.comptecqrses.commonapi.events.AccountActivatedEvent;
 import com.slimanice.comptecqrses.commonapi.events.AccountCreatedEvent;
 import com.slimanice.comptecqrses.commonapi.events.AccountCreditedEvent;
 import com.slimanice.comptecqrses.commonapi.events.AccountDebitedEvent;
+import com.slimanice.comptecqrses.commonapi.queries.GetAccountByIdQuery;
+import com.slimanice.comptecqrses.commonapi.queries.GetAllAccountsQuery;
 import com.slimanice.comptecqrses.query.entities.Account;
 import com.slimanice.comptecqrses.query.entities.Operation;
 import com.slimanice.comptecqrses.query.repositories.AccountRepository;
@@ -12,8 +14,11 @@ import com.slimanice.comptecqrses.query.repositories.OperationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -68,5 +73,17 @@ public class AccountEventHandlerService {
         operationRepository.save(operation);
         account.setBalance(account.getBalance() - event.getAmount());
         accountRepository.save(account);
+    }
+
+    @QueryHandler
+    public List<Account> on(GetAllAccountsQuery query){
+        log.info("Handling a GetAllAccountsQuery command with information: {}", query);
+        return accountRepository.findAll();
+    }
+
+    @QueryHandler
+    public Account on(GetAccountByIdQuery query){
+        log.info("Handling a GetAccountByIdQuery command with information: {}", query);
+        return accountRepository.findById(query.getId()).get();
     }
 }
